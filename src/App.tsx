@@ -20,6 +20,7 @@ function App() {
     )?.value;
 
     setRecipes([
+      ...recipes,
       {
         name: newRecipeName,
         instructions: newRecipeInstructions,

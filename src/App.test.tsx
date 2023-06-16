@@ -95,5 +95,41 @@ describe('On the landing page,', () => {
         Node.DOCUMENT_POSITION_FOLLOWING
       );
     });
+    it('should show multiple new recipe names after submitting the form.', async function () {
+      render(<App />);
+
+      let button = screen.getByRole('button', { name: 'Add Recipe' });
+      fireEvent.click(button);
+
+      let recipeNameTextBox = await screen.findByRole('textbox', {
+        name: /Recipe Name/i,
+      });
+      userEvent.type(recipeNameTextBox, 'Tofu Scramble Tacos');
+
+      let instructionsTextBox = screen.getByRole('textbox', {
+        name: /instructions/i,
+      });
+      userEvent.type(instructionsTextBox, 'Step 1: throw away this recipe.');
+
+      let submitBtn = screen.getByRole('button', { name: /submit/i });
+      fireEvent.click(submitBtn);
+
+      userEvent.clear(recipeNameTextBox);
+      userEvent.clear(instructionsTextBox);
+      userEvent.type(recipeNameTextBox, 'Burrito');
+      userEvent.type(instructionsTextBox, 'Step 1: throw away this recipe.');
+      fireEvent.click(submitBtn);
+
+      let recipe = await screen.findByText(/.*tofu scramble tacos/i);
+      expect(recipe).toBeInTheDocument();
+
+      let recipeTwo = await screen.findByText(/.*burrito/i);
+      expect(recipeTwo).toBeInTheDocument();
+
+      let header = screen.getByText('My Recipes');
+      expect(header.compareDocumentPosition(recipe)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+    });
   });
 });
